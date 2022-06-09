@@ -1,32 +1,38 @@
-import React, { Component } from 'react';
-import Joyride, { ACTIONS, CallBackProps, EVENTS, STATUS, Step } from 'react-joyride';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import React, { Component } from 'react'
+import Joyride, {
+  ACTIONS,
+  CallBackProps,
+  EVENTS,
+  STATUS,
+  Step
+} from 'react-joyride'
+import styled from 'styled-components'
+import { Link } from 'react-router-dom'
 // @ts-ignore
-import a11yChecker from 'a11y-checker';
+import a11yChecker from 'a11y-checker'
 
-import { grommet } from 'grommet/themes';
-import { Box, Button, Grommet, Heading } from 'grommet';
+import { grommet } from 'grommet/themes'
+import { Box, Button, Grommet, Heading } from 'grommet'
 // @ts-ignore
-import Menu from 'react-burger-menu/lib/menus/push';
+import Menu from 'react-burger-menu/lib/menus/push'
 
-import { ReactComponent as Times } from '../media/times.svg';
-import { ReactComponent as MenuIcon } from '../media/menu.svg';
+import { ReactComponent as Times } from '../media/times.svg'
+import { ReactComponent as MenuIcon } from '../media/menu.svg'
 
-import Growth from './Growth';
-import Calendar from './Calendar';
-import Connections from './Connections';
-import Users from './Users';
+import Growth from './Growth'
+import Calendar from './Calendar'
+import Connections from './Connections'
+import Users from './Users'
 
 interface State {
-  run: boolean;
-  sidebarOpen: boolean;
-  steps: Step[];
-  stepIndex: number;
+  run: boolean
+  sidebarOpen: boolean
+  steps: Step[]
+  stepIndex: number
 }
 
 interface StateChange {
-  isOpen: boolean;
+  isOpen: boolean
 }
 
 const Wrapper = styled(Grommet)`
@@ -35,7 +41,7 @@ const Wrapper = styled(Grommet)`
   padding-bottom: 50px;
   height: auto;
   // overflow: initial;
-`;
+`
 
 const Main = styled(Box)`
   margin: 0 auto;
@@ -45,7 +51,7 @@ const Main = styled(Box)`
   @media (min-width: 768px) {
     padding: 30px;
   }
-`;
+`
 
 const GridBox = styled(Box)`
   width: 100%;
@@ -53,10 +59,10 @@ const GridBox = styled(Box)`
   @media (min-width: 768px) {
     width: 50%;
   }
-`;
+`
 
 const Hamburger = styled(Button).attrs({
-  role: 'menu',
+  role: 'menu'
 })`
   left: 15px;
   position: absolute;
@@ -65,22 +71,22 @@ const Hamburger = styled(Button).attrs({
   @media (min-width: 768px) {
     left: 30px;
   }
-`;
+`
 
 class Controlled extends Component<any, State> {
   public state = {
     run: false,
     sidebarOpen: false,
     stepIndex: 0,
-    steps: [],
-  };
+    steps: []
+  }
 
-  private calendar?: HTMLElement;
-  private connections?: HTMLElement;
-  private growth?: HTMLElement;
-  private menu?: HTMLElement;
-  private sidebar?: HTMLElement;
-  private users?: HTMLElement;
+  private calendar?: HTMLElement
+  private connections?: HTMLElement
+  private growth?: HTMLElement
+  private menu?: HTMLElement
+  private sidebar?: HTMLElement
+  private users?: HTMLElement
 
   public componentDidMount() {
     this.setState(
@@ -103,41 +109,42 @@ class Controlled extends Component<any, State> {
             spotlightClicks: true,
             styles: {
               options: {
-                zIndex: 10000,
-              },
+                zIndex: 10000
+              }
             },
             target: this.menu!,
-            title: 'Menu',
+            title: 'Menu'
           },
           {
-            content: 'This is our sidebar, you can find everything you need here',
+            content:
+              'This is our sidebar, you can find everything you need here',
             placement: 'right',
             spotlightPadding: 0,
             styles: {
               options: {
-                zIndex: 10000,
-              },
+                zIndex: 10000
+              }
             },
             target: this.sidebar!,
-            title: 'Sidebar',
+            title: 'Sidebar'
           },
           {
             content: 'Check the availability of the team!',
             placement: 'bottom',
             styles: {
               options: {
-                zIndex: 10000,
-              },
+                zIndex: 10000
+              }
             },
             target: this.calendar!,
-            title: 'The schedule',
+            title: 'The schedule'
           },
           {
             content: <div>Our rate is off the charts!</div>,
             placement: 'bottom',
             spotlightClicks: true,
             target: this.growth!,
-            title: 'Our Growth',
+            title: 'Our Growth'
           },
           {
             content: (
@@ -161,121 +168,125 @@ class Controlled extends Component<any, State> {
             ),
             placement: 'right',
             target: this.users!,
-            title: 'Our Users',
+            title: 'Our Users'
           },
           {
             content: 'The awesome connections you have made',
             placement: 'top',
-            target: this.connections!,
-          },
-        ],
+            target: this.connections!
+          }
+        ]
       },
       () => {
-        a11yChecker();
-      },
-    );
+        a11yChecker()
+      }
+    )
   }
 
   private handleJoyrideCallback = (data: CallBackProps) => {
-    const { sidebarOpen } = this.state;
-    const { action, index, type, status } = data;
+    const { sidebarOpen } = this.state
+    const { action, index, type, status } = data
 
     if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
       // Need to set our running state to false, so we can restart if we click start again.
-      this.setState({ run: false, stepIndex: 0 });
-    } else if (([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)) {
-      const stepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
+      this.setState({ run: false, stepIndex: 0 })
+    } else if (
+      ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)
+    ) {
+      const stepIndex = index + (action === ACTIONS.PREV ? -1 : 1)
 
       if (sidebarOpen && index === 0) {
         setTimeout(() => {
-          this.setState({ run: true });
-        }, 400);
+          this.setState({ run: true })
+        }, 400)
       } else if (sidebarOpen && index === 1) {
         this.setState(
           {
             run: false,
             sidebarOpen: false,
-            stepIndex,
+            stepIndex
           },
           () => {
             setTimeout(() => {
-              this.setState({ run: true });
-            }, 400);
-          },
-        );
+              this.setState({ run: true })
+            }, 400)
+          }
+        )
       } else if (index === 2 && action === ACTIONS.PREV) {
         this.setState(
           {
             run: false,
             sidebarOpen: true,
-            stepIndex,
+            stepIndex
           },
           () => {
             setTimeout(() => {
-              this.setState({ run: true });
-            }, 400);
-          },
-        );
+              this.setState({ run: true })
+            }, 400)
+          }
+        )
       } else {
         // Update state to advance the tour
         this.setState({
           sidebarOpen: false,
-          stepIndex,
-        });
+          stepIndex
+        })
       }
     }
 
-    console.groupCollapsed(type === EVENTS.TOUR_STATUS ? `${type}:${status}` : type);
-    console.log(data);
-    console.groupEnd();
-  };
+    console.groupCollapsed(
+      type === EVENTS.TOUR_STATUS ? `${type}:${status}` : type
+    )
+    console.log(data)
+    console.groupEnd()
+  }
 
   private handleClickOpen = () => {
-    const { run, sidebarOpen, stepIndex } = this.state;
+    const { run, sidebarOpen, stepIndex } = this.state
 
     this.setState({
       run: stepIndex === 0 ? false : run,
       sidebarOpen: !sidebarOpen,
-      stepIndex: stepIndex === 0 ? 1 : stepIndex,
-    });
-  };
+      stepIndex: stepIndex === 0 ? 1 : stepIndex
+    })
+  }
 
   private handleStateChange = ({ isOpen }: StateChange) => {
-    this.setState({ sidebarOpen: isOpen });
-  };
+    this.setState({ sidebarOpen: isOpen })
+  }
 
   private setRef = (el: any) => {
     if (el instanceof HTMLElement) {
-      const { dataset } = el;
+      const { dataset } = el
 
       if (dataset.name === 'calendar') {
-        this.calendar = el;
+        this.calendar = el
       }
 
       if (dataset.name === 'connections') {
-        this.connections = el;
+        this.connections = el
       }
 
       if (dataset.name === 'growth') {
-        this.growth = el;
+        this.growth = el
       }
 
       if (dataset.name === 'menu') {
-        this.menu = el;
+        this.menu = el
       }
 
       if (dataset.name === 'sidebar') {
-        this.sidebar = el;
+        this.sidebar = el
       }
 
       if (dataset.name === 'users') {
-        this.users = el;
+        this.users = el
       }
     }
-  };
+  }
 
   public render() {
-    const { run, sidebarOpen, steps, stepIndex } = this.state;
+    const { run, sidebarOpen, steps, stepIndex } = this.state
 
     return (
       <Wrapper theme={grommet} full={true} id="outerContainer">
@@ -298,7 +309,13 @@ class Controlled extends Component<any, State> {
           customBurgerIcon={false}
           customCrossIcon={<Times color="#f04" />}
         >
-          <Box background="white" fill={true} pad="medium" data-name="sidebar" ref={this.setRef}>
+          <Box
+            background="white"
+            fill={true}
+            pad="medium"
+            data-name="sidebar"
+            ref={this.setRef}
+          >
             <Box>
               <Link className="menu-item" to="/">
                 Home
@@ -347,8 +364,8 @@ class Controlled extends Component<any, State> {
           </Box>
         </Main>
       </Wrapper>
-    );
+    )
   }
 }
 
-export default Controlled;
+export default Controlled
